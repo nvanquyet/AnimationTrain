@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MoveController : MonoBehaviour
 {
-    private float speed = 7.5f;
+    private float speed = 10f;
     private bool running = false;
 
     void Update()
@@ -14,7 +14,25 @@ public class MoveController : MonoBehaviour
 
     void Move()
     {
-        transform.Translate(InputController.instance.direction * speed * Time.deltaTime, Space.World);
+        Vector3 direction = InputController.instance.direction;
+        Vector3 dir = Vector3.zero;
+        if(direction.z > 0)
+        {
+            dir += transform.forward;
+        }
+        if (direction.z < 0)
+        {
+            dir -= transform.forward;
+        }
+        if (direction.x > 0)
+        {
+            dir += transform.right;
+        }
+        if (direction.x < 0)
+        {
+            dir -= transform.right;
+        }
+        transform.position = Vector3.Lerp(transform.position, transform.position + dir, Time.fixedDeltaTime);
     }
 
     public void SetRunning(bool codition)

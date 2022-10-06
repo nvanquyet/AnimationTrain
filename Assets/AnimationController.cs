@@ -22,8 +22,8 @@ public class AnimationController : MonoBehaviour
         {
             return;
         }
-        animator.SetFloat("Horizontal", InputController.instance.direction.x);
-        animator.SetFloat("Vertical", InputController.instance.direction.z);
+        animator.SetFloat("Horizontal", InputController.instance.direction.x, 1f, Time.fixedDeltaTime * 5);
+        animator.SetFloat("Vertical", InputController.instance.direction.z, 1f, Time.fixedDeltaTime * 5);
     }
 
     public void Run(bool condition)
