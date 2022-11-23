@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Version3.State.StateMove;
+﻿using Assets.Scripts.Version3.State;
 using Assets.Scripts.Version3.V3_Input;
 using UnityEngine;
 
@@ -7,7 +7,7 @@ namespace Assets.Scripts.Version3.V3_Control
     public interface IPlayerMove
     {
         Vector2 GetPropertiesMove{ get; }
-        StateMove GetState { get; }
+        TypeMove GetState { get; }
         public void Move(Vector2 dirrection);
         public void Jump();
         public void Rotate(Vector2 dirrection);
@@ -18,7 +18,7 @@ namespace Assets.Scripts.Version3.V3_Control
     {
         [SerializeField] private InputCtrl _input;
         [SerializeField] private Rigidbody _control;
-        [SerializeField] private StateMove m_state;
+        [SerializeField] private TypeMove m_state;
         [SerializeField] private bool crouch;
         [Header("Properties")]
         [SerializeField] private float m_jumpForce;
@@ -93,7 +93,7 @@ namespace Assets.Scripts.Version3.V3_Control
         {
             if (_input.Jump)
             {
-                m_state = StateMove.Jump;
+                m_state = TypeMove.Jump;
             }
             else
             {
@@ -103,19 +103,19 @@ namespace Assets.Scripts.Version3.V3_Control
                 }
                 if (crouch)
                 {
-                    m_state = StateMove.Crounch;
+                    m_state = TypeMove.Crounch;
                     m_speed = speedC;
                 }
                 else
                 {
                     if (_input.Run)
                     {
-                        m_state = StateMove.Run;
+                        m_state = TypeMove.Run;
                         m_speed = speedR;
                     }
                     else
                     {
-                        m_state = StateMove.Walk;
+                        m_state = TypeMove.Walk;
                         m_speed = speedW;
                     }
                 }
@@ -123,8 +123,7 @@ namespace Assets.Scripts.Version3.V3_Control
             }
         }
 
-
-        public StateMove GetState => m_state;
+        public TypeMove GetState => m_state;
     }
 
 }

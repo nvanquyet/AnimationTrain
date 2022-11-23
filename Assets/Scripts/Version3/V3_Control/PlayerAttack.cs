@@ -1,32 +1,20 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using Assets.Scripts.Version3.State.State;
-using Assets.Scripts.Version3.State.StateLayer;
+using Assets.Scripts.Version3.State;
 using Assets.Scripts.Version3.V3_Input;
 using Assets.Scripts.Version3.V3_Weapon;
 using UnityEngine;
 
 namespace Assets.Scripts.Version3.V3_Control
 {
-    public interface IPlayerAttack
-    {
-        public void Attack();
-        StateLayer GetState { get; }
-        bool isReload { get; }
-        StateProperties ChangeWeapon { get; }
-    }
-
-    public class PlayerAttack : MyBehaviour, IPlayerAttack
+    public class PlayerAttack : MyBehaviour
     {
         [Header("Input")]
         [SerializeField] private InputCtrl _inputCtrl;
-        [SerializeField] private StateLayer m_state;
-        [SerializeField] private StateProperties changeWeapon;
-
         [Header("Weapon")]
         [SerializeField] public PlayerControlWeapon weaponCtrl;
-        public Weapon weapon;
+        public TypeAttack typeAttack { get; set; }
 
+        public Weapon weapon;
         private bool reload;
         private bool haveWeapon = false;
 
@@ -40,11 +28,7 @@ namespace Assets.Scripts.Version3.V3_Control
         {
             weapon = weaponCtrl.GetWeapon().GetComponent<Weapon>();
         }
-        public StateLayer GetState => m_state;
         public bool isReload => reload;
-
-
-        public StateProperties ChangeWeapon => changeWeapon;
 
         private void Update()
         {
@@ -53,43 +37,58 @@ namespace Assets.Scripts.Version3.V3_Control
                 if (weaponCtrl.WeponControl())
                 {
                     weapon = weaponCtrl.GetWeapon().GetComponent<Weapon>();
-                    changeWeapon = StateProperties.ChangeWeapon;
-                }
-                else
-                {
-                    changeWeapon = StateProperties.NoChangeWeapon;
                 }
             }
             if (_inputCtrl.ActiveWeapon)
             {
                 HandleWeapon();
             }
-            if (weaponCtrl.GetState().Equals(StateProperties.Shoot))
+            if (weaponCtrl.typeEquiq.Equals(TypeEquiq.Gun))
             {
                 if (_inputCtrl.Reload)
                 {
                     Reload();
                 }
             }
-                if (!reload)
+            if (!reload)
+            {
+                if (_inputCtrl.Shoot)
                 {
-                    if (_inputCtrl.Shoot)
+                    switch (weaponCtrl.typeEquiq) 
                     {
-                        Attack();
+                        case TypeEquiq.Gun:
+                            {
+                                typeAttack = TypeAttack.GunAttack;
+                                break;
+                            }
+                        case TypeEquiq.Melee:
+                            {
+                                typeAttack = TypeAttack.MeleeAttack;
+                                break;
+                            }
+                    }
+                    Attack();
+                }
+                else
+                {
+                    typeAttack = TypeAttack.NoAttack;
+                    if (!haveWeapon)
+                    {
+                        weaponCtrl.typeEquiq = TypeEquiq.NoWeapon;
                     }
                     else
                     {
-                        if (haveWeapon)
+                        if(weaponCtrl.GetSelectedWeapon() != 2)
                         {
-                            m_state = StateLayer.HaveWeapon;
+                            weaponCtrl.typeEquiq = TypeEquiq.Gun;
                         }
                         else
                         {
-                            m_state = StateLayer.NoWeapon;
+                            weaponCtrl.typeEquiq = TypeEquiq.Melee;
                         }
                     }
                 }
-            
+            }
         }
 
         void HandleWeapon()
@@ -102,7 +101,7 @@ namespace Assets.Scripts.Version3.V3_Control
             if(haveWeapon && !reload)
             {
                 reload = true;
-                m_state = StateLayer.HaveWeaponR;
+                typeAttack = TypeAttack.Recharge;
                 Debug.Log("Reload");
                 StartCoroutine(ReloadComplete(weapon.timeReload));
             }
@@ -112,7 +111,7 @@ namespace Assets.Scripts.Version3.V3_Control
         {
             yield return new WaitForSeconds(timeReload);
             Debug.Log("Reload Complete");
-            m_state = StateLayer.HaveWeapon;
+            typeAttack = TypeAttack.NoAttack;
             reload = false;
             weapon.Recharge();
         }
@@ -120,7 +119,6 @@ namespace Assets.Scripts.Version3.V3_Control
         {
             if (!reload && haveWeapon)
             {
-                m_state = StateLayer.HaveWeaponS;
                 if (weapon.Attack())
                 {
                     Debug.Log("Attack Logic");

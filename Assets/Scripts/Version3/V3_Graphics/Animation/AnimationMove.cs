@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Version3.State.StateMove;
+﻿using Assets.Scripts.Version3.State;
+using Assets.Scripts.Version3.State.StateMove;
 using Assets.Scripts.Version3.V3_Control;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Assets.Scripts.Version3.V3_Graphics
     public interface IAnimationMove
     {
         public void SetProperties(Vector2 direction);
-        public void ChangeAnimation(StateMove state);
+        public void ChangeAnimation(TypeMove state);
     }
     public class AnimationMove : MyBehaviour, IAnimationMove
     {
@@ -47,25 +48,25 @@ namespace Assets.Scripts.Version3.V3_Graphics
             ChangeAnimation(_player.GetState);
         }
 
-        public void ChangeAnimation(StateMove state)
+        public void ChangeAnimation(TypeMove state)
         {
             switch (state)
             {
-                case StateMove.Walk:
+                case TypeMove.Walk:
                     {
                         followPos.localPosition = standPosCam;
                         animator.SetBool(CROUNCH, false);
                         animator.SetBool(RUN, false);
                         break;
                     }
-                case StateMove.Run:
+                case TypeMove.Run:
                     {
                         followPos.localPosition = standPosCam;
                         animator.SetBool(CROUNCH, false);
                         animator.SetBool(RUN, true);
                         break;
                     }
-                case StateMove.Crounch:
+                case TypeMove.Crounch:
                     {
                         followPos.localPosition = crounchPosCam;
                         animator.SetBool(CROUNCH, true);

@@ -1236,7 +1236,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.5995935, y: 1}
+    m_SensorSize: {x: 1.5996169, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -3972,6 +3972,8 @@ GameObject:
   - component: {fileID: 1201920139}
   - component: {fileID: 1201920138}
   - component: {fileID: 1201920137}
+  - component: {fileID: 1201920143}
+  - component: {fileID: 1201920144}
   - component: {fileID: 1201920141}
   - component: {fileID: 1201920140}
   - component: {fileID: 1201920142}
@@ -4184,6 +4186,8 @@ MonoBehaviour:
   _playerAttack: {fileID: 1501675918}
   animator: {fileID: 1201920139}
   effect: {fileID: 1570966552}
+  speedCtrl: {fileID: 0}
+  animLayer: {fileID: 0}
 --- !u!114 &1201920142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4201,6 +4205,30 @@ MonoBehaviour:
   _RHandIK: {fileID: 642864902}
   offset: {x: 0, y: 42.5, z: 0}
   _body: {fileID: 1892033066}
+--- !u!114 &1201920143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1201920134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 499419539e406f042b4e0abff0f5b803, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1201920144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1201920134}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a885757eacb499b40aba54d02fb413c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1207194925
 GameObject:
   m_ObjectHideFlags: 0
@@ -9813,8 +9841,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _inputCtrl: {fileID: 0}
-  m_state: 0
-  changeWeapon: 0
   weaponCtrl: {fileID: 0}
   weapon: {fileID: 0}
 --- !u!114 &1501675919
@@ -9834,7 +9860,6 @@ MonoBehaviour:
   weaponPosNoEq: []
   weaponPosEq: []
   selectedWeapon: 0
-  stateProperties: 0
 --- !u!1 &1524329348
 GameObject:
   m_ObjectHideFlags: 0

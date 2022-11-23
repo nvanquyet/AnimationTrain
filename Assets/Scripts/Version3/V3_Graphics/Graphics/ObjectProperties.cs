@@ -1,21 +1,11 @@
-﻿using Assets.Scripts.Version3.State.State;
-using Assets.Scripts.Version3.State.StateLayer;
+﻿using Assets.Scripts.Version3.State;
 using Assets.Scripts.Version3.V3_Control;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
 namespace Assets.Scripts.Version3.V3_Graphics
 {
-    public interface IObject
-    {
-        public void ActiveObject(StateLayer stateLayer, GameObject weapon, bool reload);
-        public void SmoothWeight(GameObject target, float weight); 
-        public void ChangeWeapon(int selected);
-
-    }
-
-
-    public class ObjectProperties : MyBehaviour, IObject
+    public class ObjectProperties : MyBehaviour
     {
         [SerializeField] private PlayerAttack _player;
         [SerializeField] private GameObject _LHandIK;
@@ -33,63 +23,51 @@ namespace Assets.Scripts.Version3.V3_Graphics
 
         private void Update()
         {
-            ActiveObject(_player.GetState,_player.weaponCtrl.GetWeapon(), _player.isReload);
+            ActiveObject(_player.weaponCtrl.typeEquiq,_player.weaponCtrl.GetWeapon(), _player.typeAttack);
         }
-        public void ActiveObject(StateLayer stateLayer,GameObject weapon, bool reload)
+        public void ActiveObject(TypeEquiq typeEquiq,GameObject weapon, TypeAttack typeAttack)
         {
-            if (stateLayer.Equals(StateLayer.NoWeapon))
+            switch (typeEquiq)
             {
-                _player.weaponCtrl.ChangeWeapon(-1);
-                _LHandIK.GetComponent<TwoBoneIKConstraint>().weight = Mathf.Lerp(_LHandIK.GetComponent<TwoBoneIKConstraint>().weight,
-                    0, Time.deltaTime * 2);
-                _body.transform.parent.GetComponent<Rig>().weight = 0.2f;
-            }
-            else
-            {
-                _player.weaponCtrl.ChangeWeapon(_player.weaponCtrl.GetSelectedWeapon());
-                if (reload)
-                {
-                    _LHandIK.GetComponent<TwoBoneIKConstraint>().weight = 0;
-                }
-                else
-                {
-                    switch (_player.weaponCtrl.GetState())
+                case TypeEquiq.NoWeapon:
                     {
-                        case StateProperties.Melee:
-                            {
-                                _LHandIK.GetComponent<TwoBoneIKConstraint>().weight = 0;
-                                break;
-                            }
-                        case StateProperties.Shoot:
-                            {
-                                _LHandIK.GetComponent<TwoBoneIKConstraint>().weight = 1;
-                                if (stateLayer.Equals(StateLayer.HaveWeaponS) || stateLayer.Equals(StateLayer.HaveWeaponR))
-                                {
-                                    _RHandIK.GetComponent<MultiAimConstraint>().weight = 1;
-                                }
-                                else
-                                {
-                                    _RHandIK.GetComponent<MultiAimConstraint>().weight = 0;
-                                }
-                                break;
-                            }
+                        _player.weaponCtrl.ChangeWeapon(-1);
+                        _LHandIK.GetComponent<TwoBoneIKConstraint>().weight = Mathf.Lerp(_LHandIK.GetComponent<TwoBoneIKConstraint>().weight,
+                            0, Time.deltaTime * 2);
+                        _body.transform.parent.GetComponent<Rig>().weight = 0.2f;
+                        break;
                     }
-                }
-                _body.transform.parent.GetComponent<Rig>().weight = 0.75f;
-                _body.GetComponent<MultiAimConstraint>().data.offset = Vector3.Lerp(_body.GetComponent<MultiAimConstraint>().data.offset,
-                    offset, Time.deltaTime * 10);
+                case TypeEquiq.Melee:
+                    {
+                        _LHandIK.GetComponent<TwoBoneIKConstraint>().weight = 0;
+                        break;
+                    }
+                case TypeEquiq.Gun:
+                    {
+                        if (typeAttack.Equals(TypeAttack.Recharge))
+                        {
+                            _LHandIK.GetComponent<TwoBoneIKConstraint>().weight = 0;
+                        }
+                        else
+                        {
+                            _LHandIK.GetComponent<TwoBoneIKConstraint>().weight = 1;
+                        }
+                        if (typeAttack.Equals(TypeAttack.GunAttack))
+                        {
+                            _RHandIK.GetComponent<MultiAimConstraint>().weight = 1;
+                        }
+                        else
+                        {
+                            _RHandIK.GetComponent<MultiAimConstraint>().weight = 0;
+                        }
+                        _body.transform.parent.GetComponent<Rig>().weight = 0.75f;
+                        _body.GetComponent<MultiAimConstraint>().data.offset = Vector3.Lerp(_body.GetComponent<MultiAimConstraint>().data.offset,
+                            offset, Time.deltaTime * 10);
+                        break;
+                    }
             }
+            
         }
 
-        public void SmoothWeight(GameObject target, float weight)
-        {
-            target.GetComponent<TwoBoneIKConstraint>().weight = Mathf.Lerp(target.GetComponent<TwoBoneIKConstraint>().weight,
-                    0, Time.deltaTime * 2);
-        }
-
-        public void ChangeWeapon(int selected)
-        {
-
-        }
     }
 }

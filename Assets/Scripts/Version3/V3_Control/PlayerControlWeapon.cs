@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using Assets.Scripts.Version3.State;
 using Assets.Scripts.Version3.State.State;
 using Assets.Scripts.Version3.V3_Input;
 using UnityEngine;
 
 namespace Assets.Scripts.Version3.V3_Control
 {
-
     public class PlayerControlWeapon : MyBehaviour
     {
         [Header("Input")]
@@ -16,7 +17,9 @@ namespace Assets.Scripts.Version3.V3_Control
         [SerializeField] private List<Transform> weaponPosNoEq = new List<Transform>();
         [SerializeField] private List<Transform> weaponPosEq = new List<Transform>();
         [SerializeField] private int selectedWeapon;
-        [SerializeField] private StateProperties stateProperties;
+        int previousSelect = -1;
+        public TypeChange typeChange { get; set; }
+        public TypeEquiq typeEquiq { get; set; }
 
         private void Awake()
         {
@@ -39,6 +42,7 @@ namespace Assets.Scripts.Version3.V3_Control
         public override void LoadComponent()
         {
             selectedWeapon = 0;
+            typeChange = TypeChange.NoChange;
             ChangeWeapon(-1);
         }
 
@@ -67,7 +71,6 @@ namespace Assets.Scripts.Version3.V3_Control
 
         public bool WeponControl()
         {
-            int previousSelect = selectedWeapon;
             if (weaponList.Count == 0)
             {
                 return false;
@@ -108,13 +111,24 @@ namespace Assets.Scripts.Version3.V3_Control
             }
             if (previousSelect != selectedWeapon)
             {
-                if(selectedWeapon == 2)
+                previousSelect = selectedWeapon;
+                switch (selectedWeapon)
                 {
-                    stateProperties = StateProperties.Melee;
-                }
-                else
-                {
-                    stateProperties = StateProperties.Shoot;
+                    case 0:
+                        {
+                            typeChange = TypeChange.ChangeGun1;
+                            break;
+                        }
+                    case 1:
+                        {
+                            typeChange = TypeChange.ChangeGun2;
+                            break;
+                        }
+                    case 2:
+                        {
+                            typeChange = TypeChange.ChangeMelee;
+                            break;
+                        }
                 }
                 ChangeWeapon(selectedWeapon);
                 return true;
@@ -130,10 +144,7 @@ namespace Assets.Scripts.Version3.V3_Control
             }
             return weaponList[selectedWeapon];
         }
-        public StateProperties GetState()
-        {
-            return stateProperties;
-        }
+
         public int GetSelectedWeapon()
         {
             return selectedWeapon;
